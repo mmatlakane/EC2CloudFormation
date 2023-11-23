@@ -1,20 +1,74 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Simple EC2 Instance Example'
 
+Parameters:
+  InstanceType:
+    Description: ParameterDescription
+    Type: String
+    Default: 't3.medium'
+  LaunchUserData:
+    Description: Base64-encoded user data to launch EC2 instances.
+    Type: String
+Mappings:
+  RegionMap:
+    eu-north-1:
+      ami: ami-06bfd6343550d4a29
+    ap-south-1:
+      ami: ami-052cef05d01020f1d
+    eu-west-3:
+      ami: ami-0d3c032f5934e1b41
+    eu-west-2:
+      ami: ami-0d37e07bd4ff37148
+    eu-west-1:
+      ami: ami-04dd4500af104442f
+    ap-northeast-3:
+      ami: ami-0f1ffb565070e6947
+    ap-northeast-2:
+      ami: ami-0eb14fe5735c13eb5
+    ap-northeast-1:
+      ami: ami-0218d08a1f9dac831
+    sa-east-1:
+      ami: ami-0056d4296b1120bc3
+    ca-central-1:
+      ami: ami-0bae7412735610274
+    ap-southeast-1:
+      ami: ami-0dc5785603ad4ff54
+    ap-southeast-2:
+      ami: ami-0bd2230cfb28832f7
+    eu-central-1:
+      ami: ami-05d34d340fb1d89e5
+    us-east-1:
+      ami: ami-0ed9277fb7eb570c9
+    af-south-1:
+     ami: ami-0bb83d6c5a7830b2b
+    us-east-2:
+      ami: ami-002068ed284fb165b
+    us-west-1:
+      ami: ami-03af6a70ccd8cb578
+    us-west-2:
+      ami: ami-00f7e5c52c0f43726
 Resources:
   MyEC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: 'ami-0d45fb2fd1e7613be'  
+#      ImageId: 'ami-0d45fb2fd1e7613be'  
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - ami
       InstanceType: 't3.medium'
       AvailabilityZone: 'af-south-1a'
       KeyName: 'gladman'  
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo "LaunchUserData..." | base64 -d | bash
       SecurityGroupIds:
         - 'sg-07602927dc54cd3ba'
         - 'sg-0b8bfd0ccc1fb6572'
       Tags:
         - Key: "Name"
-          Value: "MbaliTestInstance"
+          Value: "TestInstance"
         - Key: "Createdby"
           Value: "Mbali Matlakane"
         - Key: "Schedule"
@@ -26,3 +80,9 @@ Outputs:
     Value: !Ref MyEC2Instance
     Export:
       Name: 'MyInstanceId'
+
+#1. Enable user to choose instance type
+#2. Enable user to enter their own user data
+#3. Enable user to choose thier own AZ
+#4. Create a VPC with subnets
+#5. EC2 must be launched inside VPC subnet
