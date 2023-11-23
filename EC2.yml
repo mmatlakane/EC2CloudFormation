@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Simple EC2 Instance Example'
+
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: 'ami-0d45fb2fd1e7613be'  
+      InstanceType: 't3.medium'
+      AvailabilityZone: 'af-south-1a'
+      KeyName: 'gladman'  
+      SecurityGroupIds:
+        - 'sg-07602927dc54cd3ba'
+        - 'sg-0b8bfd0ccc1fb6572'
+      Tags:
+        - Key: "Name"
+          Value: "MbaliTestInstance"
+        - Key: "Createdby"
+          Value: "Mbali Matlakane"
+        - Key: "Schedule"
+          Value: "stop-at-5-sa"
+
+Outputs:
+  MyInstanceId:
+    Description: 'InstanceId of the newly created EC2 instance'
+    Value: !Ref MyEC2Instance
+    Export:
+      Name: 'MyInstanceId'
