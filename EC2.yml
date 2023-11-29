@@ -86,15 +86,15 @@ Resources:
           Value: "Mbali Matlakane"
         - Key: "Schedule"
           Value: "stop-at-5-sa"
-  MySubnet:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: XXXX/X
-      AvailabilityZone: !Ref 'MyZone'
-      Tags:
-      - Key: xxxxxxxx
-        Value: xxxxxxxx
+  # MySubnet:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId: !Ref MyVPC
+  #     CidrBlock: XXXX/X
+  #     AvailabilityZone: !Ref 'MyZone'
+  #     Tags:
+  #     - Key: xxxxxxxx
+  #       Value: xxxxxxxx
 
 Outputs:
   MyInstanceId:
