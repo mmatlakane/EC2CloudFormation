@@ -1,0 +1,73 @@
+Parameters:
+  VpcCidrBlock:
+    Type: String
+    Default: 10.0.0.0/16
+    Description: CIDR Block for the Virtual Private Cloud
+  PublicSubnetCidrBlock:
+    Type: String
+    Default: 10.0.0.0/24
+    Description: CIDR Block for the Public Subnet Segment
+  PublicSubnetAZ:
+    Type: String
+    Default: eu-west-1b
+    Description: Designated Avalability Zone for the Private Subnet Segment
+  PrivateSubnetCidrBlock:
+    Type: String
+    Default: 10.0.1.0/24
+    Description: CIDR Block for the Private Subnet Segment
+  PrivateSubnetAZ:
+    Type: String 
+    Default: eu-west-1a
+    Description: Designated Avalability Zone for the Private Subnet Segment
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidrBlock
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value:  !Join ['', [!Ref "AWS::StackName", "-VPC" ]]
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref PublicSubnetAZ
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnetCidrBlock
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Join ['', [!Ref "AWS::StackName", "-Pub-SubNet"]]
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref PrivateSubnetAZ
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnetCidrBlock
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Join ['', [!Ref "AWS::StackName", "-Priv-SubNet"]]
+Outputs:
+  VPC:
+    Description: A reference to the created VPC
+    Value: !Ref VPC
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-VPC"]]
+  VpcId:
+    Description: Unique identifier of the VPC 
+    Value: !Ref VPC
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-VPCID"]]
+  PublicSubnetId:
+    Description: Unique identifier of the Public Subnet segment of the VPC
+    Value: !Ref PublicSubnet
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-PublicSubnet1"]]
+  PrivateSubnetId:
+    Description: Unique identifier of the Private Subnet segment of the VPC
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: !Join ['', [!Ref "AWS::StackName", "-PrivateSubnet1"]]
