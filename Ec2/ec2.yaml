@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "A sample template"
+Resources:
+  MyEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-089b0d542946462ed"
+      InstanceType: "t3.medium"
+      # KeyName: "gladman"
+      BlockDeviceMappings:
+        - DeviceName: /dev/sdc
+          VirtualName: ephemeral0
+      Tags:
+        - Key: "Name"
+          Value: "TestInstance" #!Ref NameTag
+        - Key: "Createdby"
+          Value: "Mbali Matlakane" #!Ref CreatedByTag
+        - Key: "Schedule"
+          Value: "stop-at-5-sa" #!Ref ScheduleTag
