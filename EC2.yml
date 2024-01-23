@@ -5,8 +5,8 @@ Parameters:
   InstanceType:
     Description: ParameterDescription
     Type: String
-    #Default: 't3.medium'
-    AllowedValues: [t1.micro, t2.nano, t2.micro, t2.small, t2.medium,t3.medium', t2.large, m1.small,
+    # Default: 't3.medium'
+    AllowedValues: [t1.micro, t2.nano, t2.micro, t2.small, t2.medium,t3.medium, t2.large, m1.small,
       m1.medium, m1.large, m1.xlarge, m2.xlarge, m2.2xlarge, m2.4xlarge, m3.medium,
       m3.large, m3.xlarge, m3.2xlarge, m4.large, m4.xlarge, m4.2xlarge, m4.4xlarge,
       m4.10xlarge, c1.medium, c1.xlarge, c3.large, c3.xlarge, c3.2xlarge, c3.4xlarge,
@@ -14,16 +14,18 @@ Parameters:
       g2.8xlarge, r3.large, r3.xlarge, r3.2xlarge, r3.4xlarge, r3.8xlarge, i2.xlarge,
       i2.2xlarge, i2.4xlarge, i2.8xlarge, d2.xlarge, d2.2xlarge, d2.4xlarge, d2.8xlarge,
       hi1.4xlarge, hs1.8xlarge, cr1.8xlarge, cc2.8xlarge, cg1.4xlarge]
-  MyZone:
-    Description: Select the MyAZone
-    Type: AWS::EC2::AvailabilityZone::Name
-    
+  # MyZone:
+  #   Description: Select the MyAZone
+  #   Type: AWS::EC2::AvailabilityZone::Name
+
   LaunchUserData:
     Description: Base64-encoded user data to launch EC2 instances.
     Type: String
 
 Mappings:
   RegionMap:
+    af-south-1:
+      ami: ami-089b0d542946462ed
     eu-north-1:
       ami: ami-06bfd6343550d4a29
     ap-south-1:
@@ -52,8 +54,6 @@ Mappings:
       ami: ami-05d34d340fb1d89e5
     us-east-1:
       ami: ami-0ed9277fb7eb570c9
-    af-south-1:
-     ami: ami-0bb83d6c5a7830b2b
     us-east-2:
       ami: ami-002068ed284fb165b
     us-west-1:
@@ -64,14 +64,14 @@ Resources:
   MyEC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
-#      ImageId: 'ami-0d45fb2fd1e7613be'  
+      #ImageId: 'ami-0d45fb2fd1e7613be'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'
         - ami
       InstanceType: !Ref 'InstanceType'
-      AvailabilityZone: !Ref 'MyZone'
-      KeyName: 'gladman'  
+      # AvailabilityZone: !Ref 'MyZone'
+      KeyName: 'gladman'
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
@@ -86,15 +86,15 @@ Resources:
           Value: "Mbali Matlakane"
         - Key: "Schedule"
           Value: "stop-at-5-sa"
-  # MySubnet:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     VpcId: !Ref MyVPC
-  #     CidrBlock: XXXX/X
-  #     AvailabilityZone: !Ref 'MyZone'
-  #     Tags:
-  #     - Key: xxxxxxxx
-  #       Value: xxxxxxxx
+  MySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: XXXX/X
+      AvailabilityZone: !Ref 'MyZone'
+      Tags:
+      - Key: xxxxxxxx
+        Value: xxxxxxxx
 
 Outputs:
   MyInstanceId:

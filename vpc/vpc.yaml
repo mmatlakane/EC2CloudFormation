@@ -16,7 +16,7 @@ Parameters:
     Default: 10.0.1.0/24
     Description: CIDR Block for the Private Subnet Segment
   PrivateSubnetAZ:
-    Type: String 
+    Type: String
     Default: eu-west-1a
     Description: Designated Avalability Zone for the Private Subnet Segment
 
@@ -57,7 +57,7 @@ Outputs:
     Export:
       Name: !Join ['', [!Ref "AWS::StackName", "-VPC"]]
   VpcId:
-    Description: Unique identifier of the VPC 
+    Description: Unique identifier of the VPC
     Value: !Ref VPC
     Export:
       Name: !Join ['', [!Ref "AWS::StackName", "-VPCID"]]
