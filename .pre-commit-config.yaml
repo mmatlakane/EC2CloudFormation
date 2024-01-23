@@ -5,3 +5,32 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: [] # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # -   id: check-yaml
+      -   id: end-of-file-fixer
+      -   id: trailing-whitespace
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+    -   id: black
+  - repo: local
+    hooks:
+    - id: regula-cfn
+      name: Regula for CloudFormation
+      entry: regula run -f tap -t cfn
+      language: system
+      files: ^src/.*(yaml)$
+  - repo: local
+    hooks:
+    - id: regula-tf
+      name: Regula for Terraform HCL
+      entry: regula run -f tap -t tf
+      language: system
+      files: .*(tf)
+  - repo: https://github.com/aws-cloudformation/cfn-python-lint
+    rev: v0.84.0
+    hooks:
+      - id: cfn-python-lint
+        files: templates/.*\.(json|yml|yaml)$
