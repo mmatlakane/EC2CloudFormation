@@ -60,16 +60,17 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Check PR title
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          if [[ "$TITLE" =~ ^octocat ]]; then
-          echo "PR title starts with 'octocat'"
-          exit 0
-          else
-          echo "PR title did not start with 'octocat'"
-          exit 1
-          fi
+        # env:
+        #   TITLE: ${{ github.event.pull_request.title }}
+        # run: |
+        #   if [[ "$TITLE" =~ ^octocat ]]; then
+        #   echo "PR title starts with 'octocat'"
+        #   exit 0
+        #   else
+        #   echo "PR title did not start with 'octocat'"
+        #   exit 1
+        #   fi
+        run: echo Hello, world!
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
