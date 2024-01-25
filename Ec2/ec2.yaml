@@ -27,7 +27,7 @@ Parameters:
     Type: String
 
 Resources:
-  MyEC2Instance:
+  TestEC2Instance:
     Type: "AWS::EC2::Instance"
     Properties:
       ImageId: !Ref ImageId
@@ -47,8 +47,15 @@ Resources:
           Value: !Ref CreatedbyTag
         - Key: "Schedule"
           Value: !Ref ScheduleTag
-      SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
+      # SecurityGroupIds:
+      #   - !Ref InstanceSecurityGroup
+      NetworkInterfaces: 
+      - AssociatePublicIpAddress: "true"
+        DeviceIndex: "0"
+        GroupSet: 
+          - Ref: "InstanceSecurityGroup"
+        SubnetId: 
+          Ref: "PublicSubnetA"
         
   #This block create a VPC with 2 subnets
   MyVPC:
@@ -63,14 +70,14 @@ Resources:
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: '10.0.0.0/24'
-      AvailabilityZone: 'eu-west-1a'
+      AvailabilityZone: 'us-east-1a'
 
   PublicSubnetB:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
       CidrBlock: '10.0.1.0/24'
-      AvailabilityZone: 'eu-west-1b'
+      AvailabilityZone: 'us-east-1b'
 
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -89,7 +96,7 @@ Resources:
           CidrIp: 0.0.0.0/0
 Outputs:
   StackInstance:
-    Description: The MyEC2Instance ID
-    Value: !Ref MyEC2Instance
+    Description: The TestEC2Instance ID
+    Value: !Ref TestEC2Instance
     Export:
-      Name: !Sub "${AWS::StackName}-MyEC2Instance"
+      Name: !Sub "${AWS::StackName}-TestEC2Instance"
