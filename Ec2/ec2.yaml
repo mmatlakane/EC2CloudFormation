@@ -1,19 +1,83 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "A sample template"
+Description: "Restack EC2 Instance Baseline template"
+Parameters:
+  InstanceType:
+    Description: WebServer EC2 instance type
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /dev/ec2/instanceType
+
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
+
+  NameTag:
+    Type: String
+    Default: "TestInstance"
+
+  CreatedbyTag:
+    Type: String
+    Default: "Abigail Nkole"
+
+  ScheduleTag:
+    Type: String
+    Default: "stop-at-5-sa"
+
+  LaunchUserData:
+    Description: Base64-encoded user data to launch EC2 instances.
+    Type: String
+
+  # AvailabilityZoneA: 
+  #   Type: String
+  #   Default: eu-west-1a
+
+  # AvailabilityZoneB: 
+  #   Type: String
+  #   Default: eu-west-1b
+
 Resources:
-  MyEC2Instance:
+  TestEC2Instance:
     Type: "AWS::EC2::Instance"
     Properties:
-      ImageId: "ami-089b0d542946462ed"
-      InstanceType: "t3.medium"
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
       # KeyName: "gladman"
       BlockDeviceMappings:
         - DeviceName: /dev/sdc
           VirtualName: ephemeral0
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo "LaunchUserData..." | base64 -d | bash
       Tags:
         - Key: "Name"
-          Value: "TestInstance" #!Ref NameTag
+          Value: !Ref NameTag
         - Key: "Createdby"
-          Value: "Mbali Matlakane" #!Ref CreatedByTag
+          Value: !Ref CreatedbyTag
         - Key: "Schedule"
-          Value: "stop-at-5-sa" #!Ref ScheduleTag
+          Value: !Ref ScheduleTag
+
+      # SecurityGroupIds:
+      #   - !Ref SSHSecurityGroup 
+      #   - !Ref ServerSecurityGroup
+      # MyNetworkInterface:
+      #   Description: My Network Interface
+      #     - AssociatePublicIpAddress: "true"
+      #       DeviceIndex: "0"
+      #     GroupSet:
+      #     - !Ref InstanceSecurityGroup
+      #     SubnetId: !Ref PublicSubnetA
+      #     Tags:
+      #       - Key: Name
+      #         Value: !Ref NameTag
+      #       - Key: CreatedBy
+      #         Value: !Ref CreatedbyTag
+      #       - Key: Schedule
+      #         Value: !Ref ScheduleTag
+        
+  #This block create a VPC with 2 subnets
+Outputs:
+  StackInstance:
+    Description: The TestEC2Instance ID
+    Value: !Ref TestEC2Instance
+    Export:
+      Name: !Sub "${AWS::StackName}-TestEC2Instance"
