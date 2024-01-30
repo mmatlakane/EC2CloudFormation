@@ -1,14 +1,4 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
-Parameters:
-  AvailabilityZoneA:
-    Type: String
-    Default: eu-west-1a
-
-  AvailabilityZoneB:
-    Type: String
-    Default: eu-west-1b
-
 Resources:
   SSHSecurityGroup:
     Type: AWS::EC2::SecurityGroup
