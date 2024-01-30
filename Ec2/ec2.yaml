@@ -34,8 +34,8 @@ Resources:
       InstanceType: !Ref InstanceType
       # KeyName: "gladman"
       BlockDeviceMappings:
-        - DeviceName: /dev/sdc
-          VirtualName: ephemeral0
+      - DeviceName: /dev/sdc
+        VirtualName: ephemeral0
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
@@ -47,9 +47,11 @@ Resources:
           Value: !Ref CreatedbyTag
         - Key: "Schedule"
           Value: !Ref ScheduleTag
-      SecurityGroupIds:
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+        - !Ref ServerSecurityGroup
         - !Ref InstanceSecurityGroup
-        
+
   #This block create a VPC with 2 subnets
   MyVPC:
     Type: 'AWS::EC2::VPC'
@@ -62,34 +64,62 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: '10.0.0.0/24'
+      CidrBlock: '10.0.1.0/24'
       AvailabilityZone: 'eu-west-1a'
 
   PublicSubnetB:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: '10.0.1.0/24'
+      CidrBlock: '10.0.2.0/24'
       AvailabilityZone: 'eu-west-1b'
 
   InstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow http to client host
-      VpcId: !Ref MyVPC
+      # VpcId: !Ref MyVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
+      # SecurityGroupEgress:
+      #   - IpProtocol: tcp
+      #     FromPort: 80
+      #     ToPort: 80
+      #     CidrIp: 0.0.0.0/0
+
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: allow connections from specified CIDR ranges
+      SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 192.168.1.1/32
 Outputs:
   StackInstance:
     Description: The MyEC2Instance ID
     Value: !Ref MyEC2Instance
     Export:
       Name: !Sub "${AWS::StackName}-MyEC2Instance"
+
+  OutputInstanceSecurityGroup:
+    Description: A reference to the created security group
+    Value: !Ref InstanceSecurityGroup
