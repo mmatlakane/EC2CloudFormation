@@ -34,59 +34,23 @@ Resources:
       InstanceType: !Ref InstanceType
       # KeyName: "gladman"
       BlockDeviceMappings:
-        - DeviceName: /dev/sdc
-          VirtualName: ephemeral0
+      - DeviceName: /dev/sdc
+        VirtualName: ephemeral0
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "LaunchUserData..." | base64 -d | bash
       Tags:
-        - Key: "Name"
-          Value: !Ref NameTag
-        - Key: "Createdby"
-          Value: !Ref CreatedbyTag
-        - Key: "Schedule"
-          Value: !Ref ScheduleTag
+      - Key: "Name"
+        Value: !Ref NameTag
+      - Key: "Createdby"
+        Value: !Ref CreatedbyTag
+      - Key: "Schedule"
+        Value: !Ref ScheduleTag
       SecurityGroupIds:
-        - !Ref InstanceSecurityGroup
-        
-  #This block create a VPC with 2 subnets
-  MyVPC:
-    Type: 'AWS::EC2::VPC'
-    Properties:
-      CidrBlock: '10.0.0.0/16'
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
+      - Fn::ImportValue: AccountSSHSecurityGroup
+      - Fn::ImportValue: AccountServerSecurityGroup
 
-  PublicSubnetA:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: '10.0.0.0/24'
-      AvailabilityZone: 'eu-west-1a'
-
-  PublicSubnetB:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: '10.0.1.0/24'
-      AvailabilityZone: 'eu-west-1b'
-
-  InstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow http to client host
-      VpcId: !Ref MyVPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
 Outputs:
   StackInstance:
     Description: The MyEC2Instance ID
