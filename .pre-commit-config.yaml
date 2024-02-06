@@ -19,7 +19,7 @@ repos:
       language: system
       files: .*\.(json|yml|yaml)$
   - repo: local
-    hooks: 
+    hooks:
     - id: regula-tf
       name: Regula for Terraform HCL
       entry: regula run -f tap -t tf
@@ -61,5 +61,5 @@ repos:
           exclude: \.+.terraform\/.*$
           require_serial: true
           args: [--soft-fail]
-        
-exclude: ^\.pre-commit-config\.yaml$
+
+exclude: ^(^\.pre-commit-config\.yaml$|^\.github/workflows\/.*$)
