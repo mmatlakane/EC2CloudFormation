@@ -4,26 +4,22 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
-        args: [] # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
+        args: [feat, fix, ci, chore, test] # optional: list of Conventional Commits types to allow e.g. [feat, fix, ci, chore, test]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      # -   id: check-yaml
       -   id: end-of-file-fixer
       -   id: trailing-whitespace
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-    -   id: black
+      -   id: check-added-large-files
   - repo: local
     hooks:
     - id: regula-cfn
       name: Regula for CloudFormation
       entry: regula run -f tap -t cfn
       language: system
-      files: ^src/.*(yaml)$
+      files: .*\.(json|yml|yaml)$
   - repo: local
-    hooks:
+    hooks: 
     - id: regula-tf
       name: Regula for Terraform HCL
       entry: regula run -f tap -t tf
@@ -33,4 +29,37 @@ repos:
     rev: v0.84.0
     hooks:
       - id: cfn-python-lint
-        files: templates/.*\.(json|yml|yaml)$
+        files: .*\.(json|yml|yaml)$
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.86.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
+    hooks:
+      - id: infracost_breakdown
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: '3.2.8' # change to tag or sha
+    hooks:
+      -   id: checkov
+          name: Checkov
+          description: This hook runs checkov.
+          entry: checkov -d .
+          language: python
+          pass_filenames: false
+          always_run: false
+          files: .*(yaml)$
+          exclude: \.+.terraform\/.*$
+          require_serial: true
+          args: [--soft-fail]
+
+      -   id: checkov_container
+          name: Checkov
+          description: This hook runs checkov.
+          entry: --tty bridgecrew/checkov:latest -d .
+          args: []
+          language: docker_image
+          pass_filenames: false
+          always_run: false
+          files: .*(yaml)$
+          exclude: \.+.terraform\/.*$
+          require_serial: true
+          args: [--soft-fail]
+        
+exclude: ^\.pre-commit-config\.yaml$
