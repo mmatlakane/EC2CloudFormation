@@ -7,24 +7,60 @@ Parameters:
   AvailabilityZoneB:
     Type: String
     Default: eu-west-1b
+  VPCCidrBlock:
+    Type: String
+    Default: 10.0.0.0/16
+    AllowedPattern: '^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
+  PublicSubnetACidrBlock:
+    Type: String
+    Default: 10.0.0.0/24
+    AllowedPattern: '^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
+  PublicSubnetBCidrBlock:
+    Type: String
+    Default: 10.0.1.0/24
+    AllowedPattern: '^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$'
+Mappings:
+  RegionMap:
+    eu-west-1:
+      AZ1: eu-west-1b
+      AZ2: eu-west-1a
+    us-west-1:
+      AZ1: us-west-1a"
+      AZ2: us-west-1b
+      AZ3: us-west-1c
+
 Resources:
   MyVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
-      CidrBlock: '10.0.0.0/16'
+      CidrBlock: !Ref VPCCidrBlock #'10.0.0.0/16'
       EnableDnsSupport: true
       EnableDnsHostnames: true
-
   PublicSubnetA:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: '10.0.2.0/24'
-      AvailabilityZone: !Ref AvailabilityZoneA
-
+      CidrBlock: !Ref PublicSubnetACidrBlock #'10.0.0.0/24'
+      AvailabilityZone: !FindInMap [RegionMap, !Ref "AWS::Region", AZ1] # !Ref AvailabilityZoneA
   PublicSubnetB:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref MyVPC
-      CidrBlock: '10.0.3.0/24'
-      AvailabilityZone: !Ref AvailabilityZoneB
+      CidrBlock: !Ref PublicSubnetBCidrBlock #'10.0.1.0/24'
+      AvailabilityZone: !FindInMap [RegionMap, !Ref "AWS::Region", AZ2] #!Ref AvailabilityZoneB
+Outputs:
+  MyVPC:
+    Description: A reference to the created MyVPC
+    Value: !Ref MyVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-MyVPC"
+  PublicSubnetA:
+    Description: A reference to the created PublicSubnetA
+    Value: !Ref PublicSubnetA
+    Export:
+      Name: !Sub "${AWS::StackName}-PublicSubnetA"
+  PublicSubnetB:
+    Description: A reference to the created PublicSubnetB
+    Value: !Ref PublicSubnetB
+    Export:
+      Name: !Sub "${AWS::StackName}-PublicSubnetB"
