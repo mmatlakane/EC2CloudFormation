@@ -5,27 +5,21 @@ Parameters:
     Description: WebServer EC2 instance type
     Type: AWS::SSM::Parameter::Value<String>
     Default: /dev/ec2/instanceType
-
   ImageId:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
-
   NameTag:
     Type: String
     Default: "TestInstance"
-
   CreatedbyTag:
     Type: String
     Default: "Mbali Matlakane"
-
   ScheduleTag:
     Type: String
     Default: "stop-at-5-sa"
-
   LaunchUserData:
     Description: Base64-encoded user data to launch EC2 instances.
     Type: String
-
 Resources:
   MyEC2Instance:
     Type: "AWS::EC2::Instance"
@@ -41,15 +35,15 @@ Resources:
           #!/bin/bash
           echo "LaunchUserData..." | base64 -d | bash
       Tags:
-      - Key: "Name"
-        Value: !Ref NameTag
-      - Key: "Createdby"
-        Value: !Ref CreatedbyTag
-      - Key: "Schedule"
-        Value: !Ref ScheduleTag
+        - Key: "Name"
+          Value: !Ref NameTag
+        - Key: "Createdby"
+          Value: !Ref CreatedbyTag
+        - Key: "Schedule"
+          Value: !Ref ScheduleTag
       SecurityGroupIds:
-      - Fn::ImportValue: AccountSSHSecurityGroup
-      - Fn::ImportValue: AccountServerSecurityGroup
+        - Fn::ImportValue: AccountSSHSecurityGroup
+        - Fn::ImportValue: AccountServerSecurityGroup
 
 Outputs:
   StackInstance:
