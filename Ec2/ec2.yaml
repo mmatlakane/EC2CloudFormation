@@ -1,5 +1,30 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "A sample template"
+Parameters: 
+  InstanceTypeParameter:
+    Type: String
+    Default: t3.medium
+    AllowedValues:
+      - t3.medium
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+  NameTag:
+    Type: String
+    Default: TestInstance
+    Description: Name tag for the EC2 instance
+  CreatedByTag:
+    Type: String
+    Default: TestInstance
+    Description: Name tag for the EC2 instance
+  ScheduleTag:
+    Type: String
+    Default: stop-at-5-sa
+    Description: Name tag for the EC2 instance
+    AllowedValues: 
+      - stop-at-5-sa
+      - no-schedule
 Resources:
   MyEC2Instance:
     Type: "AWS::EC2::Instance"
@@ -12,8 +37,8 @@ Resources:
           VirtualName: ephemeral0
       Tags:
         - Key: "Name"
-          Value: "TestInstance" #!Ref NameTag
+          Value: !Ref NameTag #!Ref NameTag
         - Key: "Createdby"
-          Value: "Mbali Matlakane" #!Ref CreatedByTag
+          Value: !Ref CreatedByTag
         - Key: "Schedule"
-          Value: "stop-at-5-sa" #!Ref ScheduleTag
+          Value: !Ref ScheduleTag
