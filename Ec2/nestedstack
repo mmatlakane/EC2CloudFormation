@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  mySecurityGroup:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: s3://anything12345/AWSTemplateFormatVersion 2010-09-09.txt
+      Parameters:
+        InstanceType: t1.micro
+        KeyName: mykey
+  myEc2:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: s3://anything12345/AWSTemplateFormatVersion.txt
+      Parameters:
+        InstanceType: t1.micro
+        KeyName: mykey
