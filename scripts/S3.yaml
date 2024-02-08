@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+
+  s3bucket:
+
+    Type: 'AWS::S3::Bucket'
+
+    DeletionPolicy: Retain
+
+    Properties:
+
+      BucketName: anything12345
