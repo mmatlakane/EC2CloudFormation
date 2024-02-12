@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  InstanceType:
+    Description: WebServer EC2 instance type
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /dev/ec2/instanceType
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64
+  NameTag:
+    Type: String
+    Default: "TestInstance"
+  CreatedbyTag:
+    Type: String
+    Default: "Mbali Matlakane"
+  ScheduleTag:
+    Type: String
+    Default: "stop-at-5-sa"
+  LaunchUserData:
+    Description: Base64-encoded user data to launch EC2 instances.
+    Type: String
+Resources:
+  ################ Security Group #############
+  mySecurityGroup:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://anything12345.s3.af-south-1.amazonaws.com/AWSTemplateFormatVersion+2010-09-09.txt
+
+  ################ EC2 Instance #############
+  myEc2:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: mySecurityGroup
+    Properties:
+      TemplateURL: https://anything12345.s3.af-south-1.amazonaws.com/AWSTemplateFormatVersion.txt
+      Parameters:
+        LaunchUserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            echo "LaunchUserData..." | base64 -d | bash
+
+  myVPC:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://anything12345.s3.af-south-1.amazonaws.com/Vpc.yaml
+
+
